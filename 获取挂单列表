@@ -1,0 +1,34 @@
+请求 URL：
+POST https://web3.okx.com/api/v5/mktplace/nft/ordinals/listings
+
+请求头：
+Content-Type: application/json
+OK-ACCESS-KEY: {你的 API Key}
+OK-ACCESS-SIGN: {HMAC-SHA256签名}
+OK-ACCESS-TIMESTAMP: {ISO时间}
+OK-ACCESS-PASSPHRASE: {你的 Passphrase}
+
+请求体：
+{
+  "slug": "atmc",        // 铭文集合名
+  "limit": "10",
+  "isBrc20": "true",
+  "sort": "unit_price_asc"
+}
+
+返回关键字段：
+{
+  "data": {
+    "data": [{
+      "orderId": 8759087487,   // ← 这个最重要
+      "price": "0.0001",       // 总价 BTC
+      "unitPrice": "0.000001", // 单 token 价格
+      "ownerAddress": "bc1p..."
+    }]
+  }
+}
+
+
+
+//找到你想买的铭文的 orderId
+//这一步用你的 API Key 签名，只读权限即可，用来找低价挂单。
