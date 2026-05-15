@@ -1,0 +1,24 @@
+// 用 bitcoinjs-lib + tiny-secp256k1
+
+// 1. 解码 PSBT
+const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
+
+// 2. 构造 tweaked signer
+const xOnly = keyPair.publicKey.slice(1, 33);  // 去掉 02/03 前缀
+const tweakHash = bitcoin.crypto.taggedHash('TapTweak', xOnly);
+const tweakedSigner = keyPair.tweak(tweakHash);
+
+// 3. 对 inputsToSign 里每个 index 签名
+for (const idx of [0, 1, 3]) {
+  psbt.signInput(idx, tweakedSigner, [1]); // 1 = SIGHASH_ALL
+}
+
+// 4. 导出（不要 finalize！）
+const signedPsbt = psbt.toBase64();
+
+// 签名后 PSBT 里多了 tapKeySig 字段（64字节 Schnorr 签名）
+// 长度从 ~996 字节增加到 ~1268 字节
+
+//不需要任何网络请求，纯本地计算
+//为什么要 TapTweak？因为 bc1p 地址存的是 tweaked 公钥，不 tweak 直接签验证会失败。
+//为什么不 finalize？OKX 服务端要的是半签名格式，自己做广播。
