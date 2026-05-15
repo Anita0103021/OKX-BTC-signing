@@ -1,0 +1,28 @@
+请求 URL：
+POST https://web3.okx.com/priapi/v1/nft/inscription/rc20/v2/submitPsbtTx?t={timestamp}
+
+请求头：
+（和第二步一样，需要登录 Cookie）
+
+请求体：
+{
+  "wallet": "bc1peqm...",
+  "id": "3c763daa39f24ce2...",   // 第二步返回的订单ID
+  "tokenStandard": "5",
+  "tickerType": "0",
+  "psbtList": [{
+    "dependTx": [],
+    "fee": 526,
+    "finalized": false,          // 保持 false
+    "inputsToSign": [...],       // 原样传回
+    "psbt": "cHNidP8BAP2k..."    // 第三步签名后的 Base64
+  }]
+}
+
+返回：
+{
+  "code": 0,
+  "data": {
+    "txHash": "83e6f176791c1a25..."  // 交易哈希，上链成功
+  }
+}
