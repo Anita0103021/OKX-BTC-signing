@@ -1,0 +1,45 @@
+请求 URL：
+POST https://web3.okx.com/priapi/v1/nft/inscription/rc20/okx/orders/v2/take?t={timestamp}
+
+请求头：
+Content-Type: application/json
+cookie: {你的 OKX 登录 Cookie，包含 ok-ses-id 等}
+app-type: web
+x-cdn: https://web3.okx.com
+ok-timestamp: {timestamp}
+
+请求体：
+{
+  "walletPublicKey": "35604caa...",   // x-only 公钥，32字节hex
+  "walletAddress": "bc1peqm...",      // 你的 bc1p 地址
+  "tokenStorePublicKey": "35604caa...",
+  "tokenStoreAddress": "bc1peqm...",
+  "type": "nft",
+  "feeRate": 1,                       // 矿工费 sat/vB
+  "items": [{"orderId": 8759087487}],
+  "outputAmount": 1,
+  "tokenStandard": "5",
+  "tickerType": "0"
+}
+
+返回关键字段：
+{
+  "code": 0,
+  "data": {
+    "id": "3c763daa39f24ce2...",   // 订单ID，第三步要用
+    "psbtList": [{
+      "psbt": "cHNidP8BAP2k...",   // Base64 编码的 PSBT
+      "fee": 526,                   // 矿工费 sats
+      "finalized": false,
+      "inputsToSign": [{
+        "address": "bc1peqm...",
+        "signingIndexes": [0, 1, 3], // 你需要签第几个 input
+        "sigHash": 1,                // SIGHASH_ALL
+        "disableTweakSigner": false  // false = 需要 tweak
+      }]
+    }]
+  }
+}
+
+//告诉 OKX 你要买哪个挂单，OKX 返回一个半成品交易（PSBT），里面卖家那边已经签好了，留出你的付款 input 等你签
+//这一步需要登录 Cookie 鉴权，返回的 PSBT 是 Base64 格式，里面 input[2] 是卖家的铭文（已签好），input[0/1/3] 是你的付款 UTXO（等你签）。
